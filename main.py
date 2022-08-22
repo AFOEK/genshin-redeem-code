@@ -7,7 +7,9 @@ from typing import Optional
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-bot = commands.Bot(command_prefix='!')
+intents = Intents.all()
+intents.member = True
+bot = commands.Bot(command_prefix='!',intents=intents)
 
 @bot.event
 async def on_ready():
