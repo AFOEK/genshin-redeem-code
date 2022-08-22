@@ -7,8 +7,9 @@ from typing import Optional
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-intents = Intents.all()
+intents = discord.Intents.all()
 intents.member = True
+intents.message_content = True
 bot = commands.Bot(command_prefix='!',intents=intents)
 
 @bot.event
