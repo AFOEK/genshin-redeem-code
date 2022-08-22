@@ -4,15 +4,26 @@ import os
 from discord.ext import commands
 from dotenv import load_dotenv
 from typing import Optional
+import time
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='>>',intents=intents)
+msg = []
 
 @bot.event
-async def on_ready():
+async def on_connect():
     print(f'{bot.user.name} has connected to Discord!') #just for debugging
+    
+@bot.event
+async def on_ready():
+    global msg
+    print(f'{bot.user.name} is starting to scrape message from UID channel')
+    ch =  bot.get_channel(821006600424652840)
+    msg = await ch.history(limit=50).flatten()
+    print(f'{bot.user.name} success fully scape message from UID Channel')
+    print(msg)
 
 @bot.event
 async def on_command_error(ctx, error):
