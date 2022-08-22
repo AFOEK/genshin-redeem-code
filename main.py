@@ -17,7 +17,7 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
-        await ctx.send("Missing Argument ! :jean_question:833542806001025056")
+        await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")
 
 @bot.command(name='redeem', help="Usage: !redeem 'uid' 'redeem_code' 'server_region'. If server region is ommited it will asume asia server")
 async def redeem(ctx,uid,redeem_code,srv_reg: Optional[str] = None):
