@@ -5,6 +5,8 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from typing import Optional
 import time
+import numpy
+import pandas as pd
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -15,22 +17,23 @@ msg = []
 @bot.event
 async def on_connect():
     print(f'{bot.user.name} has connected to Discord!') #just for debugging
-    
+
 @bot.event
 async def on_ready():
     global msg
     print(f'{bot.user.name} is starting to scrape message from UID channel')
     ch =  bot.get_channel(821006600424652840)
-    msg = await ch.history(limit=50).flatten()
+    #msg = await ch.history(limit=50,oldest_first=True)
     print(f'{bot.user.name} success fully scape message from UID Channel')
-    print(msg)
+    async for msg in ch.history(limit=75,oldest_first=True):
+        print(f'{msg.author.id} - {msg.author.name}: {msg.content}')
 
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
         await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")
 
-@bot.command(name='redeem', help="Usage: !redeem 'uid' 'redeem_code' 'server_region'. If server region is ommited it will asume asia server")
+@bot.command(name='redeem', usage="Usage: >>redeem 'uid*' 'redeem_code*' 'server_region[Optional]'", help="It will make a link for redeeming genshin impact code. If server region is ommited it will asume asia server")
 async def redeem(ctx,uid,redeem_code,srv_reg: Optional[str] = None):
     print(f'{bot.user.name} getting input from discord client')
     redeem_code = redeem_code.upper()   #This will make redeem code become capitalized
