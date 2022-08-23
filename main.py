@@ -1,4 +1,4 @@
-# https://realpython.com/how-to-make-a-discord-bot-python/
+# https://realpython.com/how-to-make-a-discord-bot-python/  based by
 import discord
 import os
 from discord.ext import commands
@@ -20,22 +20,36 @@ async def on_connect():
 
 @bot.event
 async def on_ready():
-    global df_chat
+    global df_chat  #make dataframe become global so it can be access by other function
     print(f'{bot.user.name} is starting to scrape message from UID channel')    #for just debugging
-    ch =  bot.get_channel(821006600424652840)   #UID Channel
-    async for msg in ch.history(limit=75,oldest_first=True):
-        df_chat = df_chat.append({
+    ch =  bot.get_channel(821006600424652840)   #Channel id of UID Channel
+    async for msg in ch.history(limit=75,oldest_first=True):    #Get all message from UID Channel
+        df_chat = df_chat.append({  # it's append data into dataframe
             'dc_usr_id':msg.author.id,
             'dc_usrname':msg.author.name,
-            'msg_content':msg.content
+            'msg_content': msg.content,
         }, ignore_index=True)
+    
+    df_chat['msg_content'].replace(to_replace=r'\D+', value='', regex=True, inplace=True)   #Sanitize all UID
+    #This brute force sanitize, my brain can't create sophisticated regex, awk, or grep equivalent gibberish. Since I pull DC data as it and ordered it
+    #from oldest to new (from top to bottom)
+    df_chat.loc[2,'msg_content'] = '817082429'
+    df_chat.loc[20,'msg_content'] = '807802802'
+    df_chat.loc[23,'msg_content'] = '813693892'
+    df_chat.loc[2.5] = '629284960112476160', 'lacie', '813746049'
+    df_chat.loc[23.5] = '516850719609978883', 'Lost', '817011863'
+    df_chat.drop([6],axis=0,inplace=True)
+    df_chat = df_chat.sort_index().reset_index(drop=True)
+    df_chat.insert(3, "primary_account", True)
+    df_chat.loc[2,'primary_account'] = False
+    df_chat.loc[20,'primary_account'] = False
     print(f'{bot.user.name} success fully scrape message from UID Channel') #Just for debugging
-    print(df_chat.head(70))
+    print(df_chat.head(70)) #Just for debugging
 
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):  #Handling Error
-        await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")
+        await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")    #Post into Text Channel if something go wrong
 
 @bot.command(name='redeem', usage="Usage: >>redeem 'uid*' 'redeem_code*' 'server_region[Optional]'", help="It will make a link for redeeming genshin impact code. If server region is ommited it will asume asia server")
 async def redeem(ctx,uid,redeem_code,srv_reg: Optional[str] = None):
@@ -50,6 +64,6 @@ async def redeem(ctx,uid,redeem_code,srv_reg: Optional[str] = None):
         srv_reg = 'asia'
         res = f'Since no server region get specified, it will assume asia region\nhttps://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'
     print (uid,redeem_code,srv_reg) #Just for debugging
-    await ctx.send(res)
+    await ctx.send(res) #send back response
 
 bot.run(TOKEN)
