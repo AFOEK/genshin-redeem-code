@@ -50,15 +50,21 @@ async def on_ready():
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):  #Handling Error
         await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")    #Post into Text Channel if something go wrong
+    elif isinstance(error, discord.ext.commands.errors.BadArgument):
+        await ctx.send("Bad Argument ! <:PaimonAngry:833542865690558515>")
 
-@bot.command(name='redeem', usage="Usage: >>redeem 'uid*' 'redeem_code*' 'server_region[Optional]'", help="It will make a link for redeeming genshin impact code. If server region is ommited it will asume asia server")
-async def redeem(ctx,uid,redeem_code,srv_reg: Optional[str] = None):
+@bot.command(name='redeem', usage="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'server_region[Optional]'", help="It will make a link for redeeming genshin impact code. If server region is ommited it will asume asia server")
+async def redeem(ctx,redeem_code,uid:Optional[str] = None,srv_reg: Optional[str] = None):
     print(f'{bot.user.name} getting input from discord client') #Just for debugging
     redeem_code = redeem_code.upper()   #This will make redeem code become capitalized
-    res=f'https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'    #redeem link
-
-    if(uid.isnumeric() and len(uid)!=9):    #check if "UID" is UID
-        res = f'Invalid UID !'  #Error message
+    if(uid.isnumeric() and len(uid)==9 and uid != None):    #check if "UID" are given
+        res=f'https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'    #redeem link
+    elif(uid == None):  #check if "UID" are not given
+        auth = ctx.author.id    #get the message author
+        uid = df_chat.query('dc_usr_id == @auth and primary_account == True')['msg_content']
+        res=f'https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'    #redeem link
+    else:
+        raise discord.ext.commands.errors.BadArgument
 
     if(srv_reg is None):
         srv_reg = 'asia'
