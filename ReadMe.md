@@ -25,13 +25,17 @@ After you already create all the necessary account, you need to create bot in di
     - After that you need to add the bot into a server and checking if the bot is working properly try to type `>>help` it's must give back a help prompt.
 
 ## Disclaimer
-- The server need a dedicated text channel for handling user UID, and it's work better if the text chat are get formated like: `<UID> \newline IGN:<Username>`, below is example of the formated chat:
+- The server need a dedicated text channel for handling user UID, and it's work better if the text chat are get formated like: `<UID>\newlineIGN:<Username>`, below is example of the formated chat:
 
-![formated_UID](readme_img/formated_UID.png)
+    ![formated_UID](readme_img/formated_UID.png)
+
+- Since my UID data are unformated there are some of the code will make your UID data become corrupted, if your data corrupted please refer and edit the source code from line 36 to 45. Pandas knowledge are requiered !
+
 
 ## To-Do
 - [x] Generate redeem link.
 - [ ] Generate redeem link using UID in #UID channel text.
+- [ ] List all user UID.
 - [ ] Pull release patch note.
 - [ ] Pull account stats using Hoyoverse public API.
 - [ ] Pull battle Chronicle using Hoyoverse public API -> JPEG or PNG.
