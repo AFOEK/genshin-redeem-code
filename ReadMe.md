@@ -15,10 +15,8 @@ After you already create all the necessary account, you need to create bot in di
 1. **Bare metal**
 
 &nbsp;&nbsp; - First thing first, you need install all dependency tools `python3.9 pip3 discord`, after tools already downloaded you need to install all neccessary library to order bot can run properly use `pip3 install -r requirements.txt`</br>
-
 &nbsp;&nbsp; - After that you need make a `.env` file in your discord bot folder, in there you need to declare:</br>
-&nbsp;&nbsp;&nbsp;`DISCORD_TOKEN=[DISCORD_BOT_TOKEN_YOU_GET_WHEN_CREATING_BOT]`</br>
-
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`DISCORD_TOKEN=[DISCORD_BOT_TOKEN_YOU_GET_WHEN_CREATING_BOT]`</br>
 &nbsp;&nbsp; - Finally you just run your python script from command line (CMD), terminal or powershell as long as your CLI can call `python3` globally
 
 ## To-Do
