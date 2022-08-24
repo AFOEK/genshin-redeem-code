@@ -26,6 +26,7 @@ After you already create all the necessary account, you need to create bot in di
 
 ## Disclaimer
 - The server need a dedicated text channel for handling user UID, and it's work better if the text chat are get formated like: `<UID> \newline IGN:<Username>`, below is example of the formated chat:
+
 ![formated_UID](readme_img/formated_UID.png)
 
 ## To-Do
