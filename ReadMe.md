@@ -13,11 +13,20 @@ For you who want to fork this bot or run it for your own, you need:
 After you already create all the necessary account, you need to create bot in discord developer dashboard, and get the bot API Code (I don't post my API, and discord can detect if I post my API code to public). For running the bot you have 2 method:
 
 1. **Bare metal**
+    - First thing first, you need install all dependency tools `python3.9 pip3 discord`, after tools already downloaded you need to install all neccessary library to order bot can run properly use `pip3 install -r requirements.txt`</br>.
+    - After that you need make a `.env` file in your discord bot folder, in there you need to declare:</br>
+        `DISCORD_TOKEN=[DISCORD_BOT_TOKEN_YOU_GET_WHEN_CREATING_BOT]`</br>
+    - Finally you just run your python script from command line (CMD), terminal or powershell as long as your CLI can call `python3` globally. And your bot are online, after that you need to add the bot into a server and checking if the bot is working properly try to type `>>help` it's must give back a help prompt.
 
-&nbsp;&nbsp; - First thing first, you need install all dependency tools `python3.9 pip3 discord`, after tools already downloaded you need to install all neccessary library to order bot can run properly use `pip3 install -r requirements.txt`</br>
-&nbsp;&nbsp; - After that you need make a `.env` file in your discord bot folder, in there you need to declare:</br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`DISCORD_TOKEN=[DISCORD_BOT_TOKEN_YOU_GET_WHEN_CREATING_BOT]`</br>
-&nbsp;&nbsp; - Finally you just run your python script from command line (CMD), terminal or powershell as long as your CLI can call `python3` globally
+2. **Cloud hosted**
+    - Do all step one of bare metal method, after that you need to create an application on Heroku.
+    - After you setup an empty application on heroku, you need add `heroku/python` buildpacks, configs vars (this will contain you bot API code) and your github link for this bot (this is optional, you can push it using heroku git).
+    - Push the bot into heroku, and wait for build is completed, and without errors. Make sure if bot is running with open heroku application logs, it will prompt if bot is connected
+    - After that you need to add the bot into a server and checking if the bot is working properly try to type `>>help` it's must give back a help prompt.
+
+## Disclaimer
+- The server need a dedicated text channel for handling user UID, and it's work better if the text chat are get formated like: `<UID> \newline IGN:<Username>`, below is example of the formated chat:
+![formated_UID](readme_img/formated_UID.png)
 
 ## To-Do
 - [x] Generate redeem link.
