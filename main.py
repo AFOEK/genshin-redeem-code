@@ -43,32 +43,36 @@ async def on_ready():
     df_chat.insert(3, "primary_account", True)
     df_chat.loc[2,'primary_account'] = False
     df_chat.loc[20,'primary_account'] = False
-    print(f'{bot.user.name} success fully scrape message from UID Channel') #Just for debugging
-    print(df_chat.head(70)) #Just for debugging
+    # print(f'{bot.user.name} success fully scrape message from UID Channel') #Just for debugging
+    # print(df_chat.head(5)) #Just for debugging
 
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):  #Handling Error
+    if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):  #Handling Error missing argument
         await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")    #Post into Text Channel if something go wrong
-    elif isinstance(error, discord.ext.commands.errors.BadArgument):
+    elif isinstance(error, discord.ext.commands.errors.BadArgument):    #Handling Bad Argument
         await ctx.send("Bad Argument ! <:PaimonAngry:833542865690558515>")
 
-@bot.command(name='redeem', usage="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'server_region[Optional]'", help="It will make a link for redeeming genshin impact code. If server region is ommited it will asume asia server")
+@bot.command(name='redeem', usage="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'server_region[Optional]'", help="It will make a link for redeeming genshin impact code. If server region is ommited it will assume asia server")
 async def redeem(ctx,redeem_code,uid:Optional[str] = None,srv_reg: Optional[str] = None):
     print(f'{bot.user.name} getting input from discord client') #Just for debugging
     redeem_code = redeem_code.upper()   #This will make redeem code become capitalized
-    if(uid.isnumeric() and len(uid)==9 and uid != None):    #check if "UID" are given
-        res=f'https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'    #redeem link
-    elif(uid == None):  #check if "UID" are not given
+    res_wrn=''
+    if(uid is not None):    #check if "UID" are given
+        if(len(uid) != 9 and (not uid.isnumeric())):
+            raise discord.ext.commands.errors.BadArgument
+        else:
+            uid=uid
+    if(uid is None):  #check if "UID" are not given
         auth = ctx.author.id    #get the message author
-        uid = df_chat.query('dc_usr_id == @auth and primary_account == True')['msg_content']
-        res=f'https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'    #redeem link
-    else:
-        raise discord.ext.commands.errors.BadArgument
+        uid = df_chat.query('dc_usr_id == @auth and primary_account == True')['msg_content'].to_string(index=False)
+        print(uid)
 
     if(srv_reg is None):
         srv_reg = 'asia'
-        res = f'Since no server region get specified, it will assume asia region\nhttps://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'
+        res_wrn = f'Since no server region get specified, it will assume asia region'
+
+    res = res_wrn+f'\nhttps://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'
     print (uid,redeem_code,srv_reg) #Just for debugging
     await ctx.send(res) #send back response
 
