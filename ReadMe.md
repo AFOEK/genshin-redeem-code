@@ -25,18 +25,18 @@ After you already create all the necessary account, you need to create bot in di
     - After that you need to add the bot into a server and checking if the bot is working properly try to type `>>help` it's must give back a help prompt.
 
 ## Disclaimer
-- The server need a dedicated text channel for handling user UID, and it's work better if the text chat are get formated like: `<UID>\newlineIGN:<Username>`, below is example of the formated chat:
+- The bot need a dedicated text channel on discord server for handling user UID, and it's work better if the text chat are get formated like: `<UID>\newlineIGN:<Username>`, below is example of the formated chat:
 
         ![formated_UID](readme_img/formated_UID.png)
 
-- Since my UID data are unformated there are some of the code will make your UID data become corrupted, if your data corrupted please refer and edit the source code from line 36 to 45. Pandas knowledge are requiered !
+- Since my UID data are unformated there are some of the code will make your UID data become corrupted, if your data corrupted please refer and edit the source code from line 36 to 45. Pandas knowledge are requiered !~~my brain just commited suicide when I trying to make a regex for that sh*t~~
 - If there are multiple account you need to change, primary account flag like line 44 or line 45. Since the code are taking author message id.
 
 ## To-Do
 - [x] Generate redeem link.
+- [x] Hosted bot on PaaS (Heroku).
 - [ ] Generate redeem link using UID in #UID channel text.
 - [ ] List all user UID.
 - [ ] Pull release patch note.
 - [ ] Pull account stats using Hoyoverse public API.
 - [ ] Pull battle Chronicle using Hoyoverse public API -> JPEG or PNG.
-- [x] Hosted bot on PaaS (Heroku).

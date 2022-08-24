@@ -31,8 +31,8 @@ async def on_ready():
         }, ignore_index=True)
     
     df_chat['msg_content'].replace(to_replace=r'\D+', value='', regex=True, inplace=True)   #Sanitize all UID
-    #This brute force sanitize, my brain can't create sophisticated regex, awk, or grep equivalent gibberish. Since I pull DC data as it and ordered it
-    #from oldest to new (from top to bottom)
+    #This brute force sanitize, my brain can't create sophisticated regex, awk, or grep equivalent gibberish.
+    #Since I pulled DC data as it and ordered it from oldest to new (from top to bottom)
     df_chat.loc[2,'msg_content'] = '817082429'
     df_chat.loc[20,'msg_content'] = '807802802'
     df_chat.loc[23,'msg_content'] = '813693892'
@@ -53,19 +53,32 @@ async def on_command_error(ctx, error):
     elif isinstance(error, discord.ext.commands.errors.BadArgument):    #Handling Bad Argument
         await ctx.send("Bad Argument ! <:PaimonAngry:833542865690558515>")
 
-@bot.command(name='redeem', usage="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'server_region[Optional]'", help="It will make a link for redeeming genshin impact code. If server region is ommited it will assume asia server")
-async def redeem(ctx,redeem_code,uid:Optional[str] = None,srv_reg: Optional[str] = None):
+@bot.command(name='list_uid', brief="Usage: >>list_uid 'user[Optional]'", usage='It will list all UID and discord username respectically. If discord username are given it will display that user UID')
+async def list_uid(ctx,user:Optional[str]=None):
+    print(f'{bot.user.name} getting input from discord client')
+    if(user is None):
+        res
+    
+    await ctx.send(res)
+
+
+@bot.command(name='redeem', brief="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'second_acc[Optional]' 'server_region[Optional]'", usage="It will make a link for redeeming genshin impact code. If server region is ommited it will assume asia server, and if second_acc is not given it will set to primary")
+async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[bool] = False,srv_reg: Optional[str] = None):
     print(f'{bot.user.name} getting input from discord client') #Just for debugging
     redeem_code = redeem_code.upper()   #This will make redeem code become capitalized
     res_wrn=''
     if(uid is not None):    #check if "UID" are given
         if(len(uid) != 9 and (not uid.isnumeric())):
-            raise discord.ext.commands.errors.BadArgument
+            raise discord.ext.commands.errors.BadArgument   #raising error if UID is not numeric and less or more than 9 digits
         else:
-            uid=uid
+            uid=uid #store UID to UID, this is dumb move but more logical
     if(uid is None):  #check if "UID" are not given
         auth = ctx.author.id    #get the message author
-        uid = df_chat.query('dc_usr_id == @auth and primary_account == True')['msg_content'].to_string(index=False)
+        if(second_acc is False):
+            prime_acc=True
+        else:
+            prime_acc=False
+        uid = df_chat.query('dc_usr_id == @auth and primary_account == @prime_acc')['msg_content'].to_string(index=False)
         print(uid)
 
     if(srv_reg is None):
