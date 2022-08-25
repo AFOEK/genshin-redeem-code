@@ -25,12 +25,13 @@ async def on_ready():
     ch =  bot.get_channel(821006600424652840)   #Channel id of UID Channel
     async for msg in ch.history(limit=75,oldest_first=True):    #Get all message from UID Channel
         df_chat = df_chat.append({  # it's append data into dataframe
-            'discord_user_id':msg.author.id,
-            'discord_username':msg.author.name,
-            'uid': msg.content,
+            'discord_user_id':msg.author.id,    #Insert user discord ID into discord_user_id column
+            'discord_username':msg.author.name, #Insert user discord username into discord_user_name column
+            'uid': msg.content, #Insert user message into uid column
         }, ignore_index=True)
     
     df_chat['uid'].replace(to_replace=r'\D+', value='', regex=True, inplace=True)   #Sanitize all UID
+    #print(df_chat.head(70))    #Just for debug
     #This brute force sanitize, my brain can't create sophisticated regex, awk, or grep equivalent gibberish.
     #Since I pulled DC data as it and ordered it from oldest to new (from top to bottom)
     df_chat.loc[2,'uid'] = '817082429'
@@ -51,13 +52,18 @@ async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):  #Handling Error missing argument
         await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")    #Post into Text Channel if something go wrong
     elif isinstance(error, discord.ext.commands.errors.BadArgument):    #Handling Bad Argument
-        await ctx.send("Bad Argument ! <:PaimonAngry:833542865690558515>")
+        await ctx.send("Bad Argument ! <:PaimonAngry:833542865690558515>")  #Post into Text Channel if something go wrong
 
 @bot.command(name='list', brief="Usage: >>list_uid 'user[Optional]'", usage='It will list all UID and discord username respectically. If discord username are given it will display that user UID')
 async def list_uid(ctx,user:Optional[str]=None):
-    print(f'{bot.user.name} getting input from discord client')
-    if(user is None):
-        uid_data = df_chat[df_chat.columns[1:4]]
+    print(f'{bot.user.name} getting input from discord client') #Just for debugging
+    if(user is None):   #Check if username is not given
+        uid_data = df_chat[df_chat.columns[1:4]]    #get all column except discord user ID
+    else:
+        if(user is not None):   #Check if username is given
+            uid_data = df_chat[df_chat['discord_username'] == user] #Check if username given are in dataframe
+            if(uid_data.empty): #Check if return of dataframe are empty raise an error
+                raise discord.ext.commands.errors.BadArgument
     await ctx.send(f'```\n{uid_data}```')
 
 
@@ -73,19 +79,18 @@ async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[b
             uid=uid #store UID to UID, this is dumb move but more logical
     if(uid is None):  #check if "UID" are not given
         auth = ctx.author.id    #get the message author
-        if(second_acc is False):
+        if(second_acc is False):    #Check if second account flag are False
             prime_acc=True
         else:
             prime_acc=False
-        uid = df_chat.query('discord_user_id == @auth and primary_account == @prime_acc')['uid'].to_string(index=False)
-        print(uid)
+        uid = df_chat.query('discord_user_id == @auth and primary_account == @prime_acc')['uid'].to_string(index=False) #querying UID from dataframe
 
-    if(srv_reg is None):
-        srv_reg = 'asia'
-        res_wrn = f'Since no server region get specified, it will assume asia region'
+    if(srv_reg is None):    #Check if server_region are given
+        srv_reg = 'asia'    #Handling if server_region are not given
+        res_wrn = f'Since no server region get specified, it will assume asia region'   #just ordinary warning string
 
     res = res_wrn+f'\nhttps://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'
-    print (uid,redeem_code,srv_reg) #Just for debugging
+    #print (uid,redeem_code,srv_reg) #Just for debugging
     await ctx.send(res) #send back response
 
-bot.run(TOKEN)
+bot.run(TOKEN)  #Run the bot using existing token
