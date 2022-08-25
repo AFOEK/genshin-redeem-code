@@ -57,8 +57,9 @@ async def on_command_error(ctx, error):
 async def list_uid(ctx,user:Optional[str]=None):
     print(f'{bot.user.name} getting input from discord client')
     if(user is None):
-        res
-    
+        print(ok)
+        users_genshin = df_chat['dc_usrname','msg_content','primary_account'].to_string(index=False)
+        print(users_genshin)
     await ctx.send(res)
 
 
