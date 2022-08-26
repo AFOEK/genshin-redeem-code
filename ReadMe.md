@@ -13,7 +13,7 @@ For you who want to fork this bot or run it for your own, you need:
 After you already create all the necessary account, you need to create bot in discord developer dashboard, and get the bot API Code (I don't post my API, and discord can detect if I post my API code to public). For running the bot you have 2 method:
 
 1. **Bare metal**
-    - First thing first, you need install all dependency tools `python3.9 pip3 discord`, after tools already downloaded you need to install all neccessary library to order bot can run properly use `pip3 install -r requirements.txt`</br>.
+    - First thing first, you need install all dependency tools `python3.9 pip3 discord`, after tools already downloaded you need to install all neccessary library to order bot can run properly use `pip3 install -r requirements.txt`.
     - After that you need make a `.env` file in your discord bot folder, in there you need to declare:</br>
         `DISCORD_TOKEN=[DISCORD_BOT_TOKEN_YOU_GET_WHEN_CREATING_BOT]`</br>
     - Finally you just run your python script from command line (CMD), terminal or powershell as long as your CLI can call `python3` globally. And your bot are online, after that you need to add the bot into a server and checking if the bot is working properly try to type `>>help` it's must give back a help prompt.
