@@ -35,8 +35,8 @@ After you already create all the necessary account, you need to create bot in di
 ## To-Do
 - [x] Generate redeem link.
 - [x] Hosted bot on PaaS (Heroku).
-- [ ] Generate redeem link using UID in #UID channel text.
-- [ ] List all user UID.
+- [x] Generate redeem link using UID in #UID channel text.
+- [x] List all user UID.
 - [ ] Pull release patch note.
 - [ ] Pull account stats using Hoyoverse public API.
 - [ ] Pull battle Chronicle using Hoyoverse public API -> JPEG or PNG.

@@ -1,4 +1,6 @@
 # https://realpython.com/how-to-make-a-discord-bot-python/  based by
+#Import necessary library
+# https://stackoverflow.com/questions/70714205/discord-py-how-to-wait-for-user-input-that-can-be-different
 import discord
 import os
 from discord.ext import commands
@@ -6,13 +8,16 @@ from dotenv import load_dotenv
 from typing import Optional
 import re
 import numpy
+import genshin as gi
 import pandas as pd
 
+#Init
 load_dotenv()   #Load neccessary env
 TOKEN = os.getenv('DISCORD_TOKEN')  #Load token into variable
 intents = discord.Intents.all() #Set intents
 bot = commands.Bot(command_prefix='>>',intents=intents) #Bot init
 df_chat =  pd.DataFrame(columns=['discord_user_id','discord_username','uid'])   #Creating dataframe, it's wiser to make dataframe than expost it into hard csv
+client = gi.Client(game=gi.Game.GENSHIN)
 
 @bot.event
 async def on_connect():
@@ -66,7 +71,6 @@ async def list_uid(ctx,user:Optional[str]=None):
                 raise discord.ext.commands.errors.BadArgument
     await ctx.send(f'```\n{uid_data}```')
 
-
 @bot.command(name='redeem', brief="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'second_acc[Optional]' 'server_region[Optional]'", usage="It will make a link for redeeming genshin impact code. If server region is ommited it will assume asia server, and if second_acc is not given it will set to primary")
 async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[bool] = False,srv_reg: Optional[str] = None):
     print(f'{bot.user.name} getting input from discord client') #Just for debugging
@@ -92,5 +96,10 @@ async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[b
     res = res_wrn+f'\nhttps://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'
     #print (uid,redeem_code,srv_reg) #Just for debugging
     await ctx.send(res) #send back response
+
+@bot.command(name='stat', brief="Usage: >>uid",usage="It's will display stat of your genshin account")
+async def stat(ctx,uid):
+    print(uid)
+    ctx.send(uid)
 
 bot.run(TOKEN)  #Run the bot using existing token
