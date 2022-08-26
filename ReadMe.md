@@ -27,7 +27,7 @@ After you already create all the necessary account, you need to create bot in di
 ## Disclaimer
 - The bot need a dedicated text channel on discord server for handling user UID, and it's work better if the text chat are get formated like: `<UID>\newlineIGN:<Username>`, below is example of the formated chat:
 
-        ![formated_UID](readme_img/formated_UID.png)
+    ![formated_UID](readme_img/formated_UID.png)
 
 - Since my UID data are unformated there are some of the code will make your UID data become corrupted, if your data corrupted please refer and edit the source code from line 36 to 45. Pandas knowledge are requiered !~~my brain just commited suicide when I trying to make a regex for that sh*t~~
 - If there are multiple account you need to change, primary account flag like line 44 or line 45. Since the code are taking author message id.
