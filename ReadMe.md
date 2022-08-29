@@ -29,8 +29,9 @@ After you already create all the necessary account, you need to create bot in di
 
     ![formated_UID](readme_img/formated_UID.png)
 
-- Since my UID data are unformated there are some of the code will make your UID data become corrupted, if your data corrupted please refer and edit the source code from line 36 to 45. Pandas knowledge are requiered !~~my brain just commited suicide when I trying to make a regex for that sh*t~~
+- Since my UID data are unformated there are some of the code will make your UID data become corrupted, if your data corrupted please refer and edit the source code from line 36 to 45. Pandas knowledge are requiered ! ~~my brain just commited suicide when I trying to make a regex for that sh*t~~
 - If there are multiple account you need to change, primary account flag like line 44 or line 45. Since the code are taking author message id.
+- Latest announcement from Heroku, they will shutdown free tier dynos on 28 September, so I need find other host replacement. 
 
 ## To-Do
 - [x] Generate redeem link.
@@ -38,5 +39,15 @@ After you already create all the necessary account, you need to create bot in di
 - [x] Generate redeem link using UID in #UID channel text.
 - [x] List all user UID.
 - [ ] Pull release patch note.
+- [ ] Migrate bot host out from Heroku.
+- [ ] Create login from Discord for public API
 - [ ] Pull account stats using Hoyoverse public API.
 - [ ] Pull battle Chronicle using Hoyoverse public API -> JPEG or PNG.
+
+## Credits
+This project are based by:
+- [Realpython tutorial](https://realpython.com/how-to-make-a-discord-bot-python/)
+Powered by:
+- [Stackoverflow](https://stackoverflow.com/questions/70714205/discord-py-how-to-wait-for-user-input-that-can-be-different)
+- [Genshin.py github](https://github.com/thesadru/genshin.py), and [genshin.py docs](https://thesadru.github.io/genshin.py/)
+- [Discord.py](https://discordpy.readthedocs.io/en/stable/ext/commands/commands.html)

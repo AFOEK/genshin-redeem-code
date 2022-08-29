@@ -15,8 +15,12 @@ import pandas as pd
 load_dotenv()   #Load neccessary env
 TOKEN = os.getenv('DISCORD_TOKEN')  #Load token into variable
 intents = discord.Intents.all() #Set intents
-bot = commands.Bot(command_prefix='>>',intents=intents) #Bot init
+bot = commands.Bot(command_prefix='>>',intents=intents, case_insensitive=True) #Bot init
 df_chat =  pd.DataFrame(columns=['discord_user_id','discord_username','uid'])   #Creating dataframe, it's wiser to make dataframe than expost it into hard csv
+isLoggedIn = False  #Flag for checking if user already logged in
+cookies = ''
+ltuid = ''
+lttoken = ''
 client = gi.Client(game=gi.Game.GENSHIN)
 
 @bot.event
@@ -42,6 +46,7 @@ async def on_ready():
     df_chat.loc[2,'uid'] = '817082429'
     df_chat.loc[20,'uid'] = '807802802'
     df_chat.loc[23,'uid'] = '813693892'
+    df_chat.loc[24,'uid'] = '833076864'
     df_chat.loc[2.5] = '629284960112476160', 'lacie', '813746049'
     df_chat.loc[23.5] = '516850719609978883', 'Lost', '817011863'
     df_chat.drop([6],axis=0,inplace=True)
@@ -50,7 +55,7 @@ async def on_ready():
     df_chat.loc[2,'primary_account'] = False
     df_chat.loc[20,'primary_account'] = False
     print(f'{bot.user.name} success fully scrape message from UID Channel') #Just for debugging
-    # print(df_chat.head(5)) #Just for debugging
+    print(df_chat.head(70)) #Just for debugging
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -97,9 +102,26 @@ async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[b
     #print (uid,redeem_code,srv_reg) #Just for debugging
     await ctx.send(res) #send back response
 
-@bot.command(name='stat', brief="Usage: >>uid",usage="It's will display stat of your genshin account")
-async def stat(ctx,uid):
-    print(uid)
-    ctx.send(uid)
+@bot.command(name='stat', brief="Usage: >>stat",usage="It's will display stat of your genshin account")
+async def stat(ctx):
+    print(f'{bot.user.name} getting input from discord client') #Just for debugging
+    global isLoggedIn, cookies, lttoken, ltuid
+    if (isLoggedIn is False and cookies == ''):
+        await ctx.send(f'Hey, {ctx.author.name} you need login before you can pull data from Hoyoverse. Login format <username/email> <password>.\n **Important to add >> in front**')
+    
+    def check(m):
+        return (m.content.startswith(">>") and m.author.id == ctx.author.id)
+
+    while True:
+        msg = await bot.wait_for("message",check=check)
+        msg_split = str(msg.content).split()
+        if(msg.author.id == ctx.author.id):
+            msg.delete()
+        usrname = msg_split[0]
+        passwd = msg_split[1]
+        cookies = client.login_with_password(usrname, passwd)
+        print('ok')
+    
+    await ctx.send(f'{uid}')
 
 bot.run(TOKEN)  #Run the bot using existing token
