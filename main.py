@@ -55,7 +55,7 @@ async def on_ready():
     df_chat.loc[2,'primary_account'] = False
     df_chat.loc[20,'primary_account'] = False
     print(f'{bot.user.name} success fully scrape message from UID Channel') #Just for debugging
-    print(df_chat.head(70)) #Just for debugging
+    print(df_chat.tail(5)) #Just for debugging
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -105,23 +105,27 @@ async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[b
 @bot.command(name='stat', brief="Usage: >>stat",usage="It's will display stat of your genshin account")
 async def stat(ctx):
     print(f'{bot.user.name} getting input from discord client') #Just for debugging
-    global isLoggedIn, cookies, lttoken, ltuid
+    global cookies, lttoken, ltuid
     if (isLoggedIn is False and cookies == ''):
-        await ctx.send(f'Hey, {ctx.author.name} you need login before you can pull data from Hoyoverse. Login format <username/email> <password>.\n **Important to add >> in front**')
+        await ctx.send(f"Hey, {ctx.author.name} you need login before you can pull data from Hoyoverse. Login format <username/email> <password>.\nAfter you insert your credential (don't worry your message will be destroyed), it will open your prefered web browser and click login button there. **You can use spoiler (\||<username> <password>||) tag if you want**")
     
     def check(m):
-        return (m.content.startswith(">>") and m.author.id == ctx.author.id)
+        return (m.author.id == ctx.author.id)
 
     while True:
         msg = await bot.wait_for("message",check=check)
-        msg_split = str(msg.content).split()
-        if(msg.author.id == ctx.author.id):
-            msg.delete()
+        await msg.delete()
+        if(str(msg.content).startswith('||')):
+            msg_split = re.sub(r'\|\|','',str(msg.content)).split()
+        else:
+            msg_split = str(msg.content).split()
         usrname = msg_split[0]
         passwd = msg_split[1]
-        cookies = client.login_with_password(usrname, passwd)
-        print('ok')
-    
-    await ctx.send(f'{uid}')
+        client.set_browser_cookies()
+        cookies = await client.login_with_password(usrname, passwd)
+        lttoken = cookies['cookie_token']
+        ltuid = cookies['ltuid']
+        account_id = cookies['account_id']
+    await ctx.send('In progress')
 
 bot.run(TOKEN)  #Run the bot using existing token

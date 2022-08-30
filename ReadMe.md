@@ -47,6 +47,8 @@ After you already create all the necessary account, you need to create bot in di
 ## Credits
 This project are based by:
 - [Realpython tutorial](https://realpython.com/how-to-make-a-discord-bot-python/)
+- [Medium](https://python.plainenglish.io/send-an-embed-with-a-discord-bot-in-python-61d34c711046)
+
 Powered by:
 - [Stackoverflow](https://stackoverflow.com/questions/70714205/discord-py-how-to-wait-for-user-input-that-can-be-different)
 - [Genshin.py github](https://github.com/thesadru/genshin.py), and [genshin.py docs](https://thesadru.github.io/genshin.py/)
