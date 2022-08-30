@@ -9,6 +9,7 @@ from typing import Optional
 import re
 import numpy
 import genshin as gi
+import asyncio
 import pandas as pd
 
 #Init
@@ -63,6 +64,8 @@ async def on_command_error(ctx, error):
         await ctx.send("Missing Argument ! <:jean_question:833542806001025056>")    #Post into Text Channel if something go wrong
     elif isinstance(error, discord.ext.commands.errors.BadArgument):    #Handling Bad Argument
         await ctx.send("Bad Argument ! <:PaimonAngry:833542865690558515>")  #Post into Text Channel if something go wrong
+    elif isinstance(error, asyncio.TimeoutError):   #Handling asyncio timeout error
+        await ctx.send("Request Timeout ! <:hutao_cry:833542698455007232>") #POst into Text Channel if something go wrong
 
 @bot.command(name='list', brief="Usage: >>list_uid 'user[Optional]'", usage='It will list all UID and discord username respectically. If discord username are given it will display that user UID')
 async def list_uid(ctx,user:Optional[str]=None):
@@ -105,27 +108,27 @@ async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[b
 @bot.command(name='stat', brief="Usage: >>stat",usage="It's will display stat of your genshin account")
 async def stat(ctx):
     print(f'{bot.user.name} getting input from discord client') #Just for debugging
-    global cookies, lttoken, ltuid
-    if (isLoggedIn is False and cookies == ''):
-        await ctx.send(f"Hey, {ctx.author.name} you need login before you can pull data from Hoyoverse. Login format <username/email> <password>.\nAfter you insert your credential (don't worry your message will be destroyed), it will open your prefered web browser and click login button there. **You can use spoiler (\||<username> <password>||) tag if you want**")
+    global cookies, lttoken, ltuid  #Cache user credential here
+    if (cookies == ''): #Check if user already logged in
+        await ctx.send(f"Hey, {ctx.author.name} you need login before you can pull data from Hoyoverse. Login format <username/email> <password>.\nAfter you insert your credential (don't worry your message will be destroyed), it will open your prefered web browser and click login button there. **You can use spoiler (\||<username> <password>||) tag if you want**")   #Prompt
     
     def check(m):
-        return (m.author.id == ctx.author.id)
+        return (m.author.id == ctx.author.id)   #Check if author is same as who requested the command
 
-    while True:
-        msg = await bot.wait_for("message",check=check)
-        await msg.delete()
-        if(str(msg.content).startswith('||')):
-            msg_split = re.sub(r'\|\|','',str(msg.content)).split()
+    while True: #wait
+        msg = await bot.wait_for("message",check=check,timeout=30) #wait for message given, and check if author is the same as requested. Timeout 30s
+        await msg.delete()  #Delete message for security
+        if(str(msg.content).startswith('||')):  #Check if start with || (spoiler tag)
+            msg_split = re.sub(r'\|\|','',str(msg.content)).split() #Remove "||" and convert it into array
         else:
-            msg_split = str(msg.content).split()
-        usrname = msg_split[0]
-        passwd = msg_split[1]
-        client.set_browser_cookies()
-        cookies = await client.login_with_password(usrname, passwd)
-        lttoken = cookies['cookie_token']
-        ltuid = cookies['ltuid']
-        account_id = cookies['account_id']
+            msg_split = str(msg.content).split()    #convert it into array
+        usrname = msg_split[0]  #get first element from array
+        passwd = msg_split[1]   #get second element from array
+        client.set_browser_cookies()    #set browser cookie
+        cookies = await client.login_with_password(usrname, passwd) #get login cookies
+        lttoken = cookies['cookie_token']   #get login lttoken / cookie
+        ltuid = cookies['ltuid']    #get login ltuid
+        account_id = cookies['account_id']  ##get login account_id
     await ctx.send('In progress')
 
 bot.run(TOKEN)  #Run the bot using existing token
