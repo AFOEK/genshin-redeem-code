@@ -42,6 +42,7 @@ async def on_ready():
     
     df_chat['uid'].replace(to_replace=r'\D+', value='', regex=True, inplace=True)   #Sanitize all UID
     #print(df_chat.head(70))    #Just for debug
+
     #This brute force sanitize, my brain can't create sophisticated regex, awk, or grep equivalent gibberish.
     #Since I pulled DC data as it and ordered it from oldest to new (from top to bottom)
     df_chat.loc[2,'uid'] = '817082429'
@@ -110,7 +111,7 @@ async def stat(ctx):
     print(f'{bot.user.name} getting input from discord client') #Just for debugging
     global cookies, lttoken, ltuid  #Cache user credential here
     if (cookies == ''): #Check if user already logged in
-        await ctx.send(f"Hey, {ctx.author.name} you need login before you can pull data from Hoyoverse. Login format <username/email> <password>.\nAfter you insert your credential (don't worry your message will be destroyed), it will open your prefered web browser and click login button there. **You can use spoiler (\||<username> <password>||) tag if you want**")   #Prompt
+        await ctx.send(f"Hey, {ctx.author.name} you need login before you can pull data from Hoyoverse, your message will get destroyed after you input you cookie token.\n**You can use spoiler (\||<lttoken> <ltuid>||) tag if you want**")   #Prompt
     
     def check(m):
         return (m.author.id == ctx.author.id)   #Check if author is same as who requested the command
@@ -122,13 +123,19 @@ async def stat(ctx):
             msg_split = re.sub(r'\|\|','',str(msg.content)).split() #Remove "||" and convert it into array
         else:
             msg_split = str(msg.content).split()    #convert it into array
-        usrname = msg_split[0]  #get first element from array
-        passwd = msg_split[1]   #get second element from array
-        client.set_browser_cookies()    #set browser cookie
-        cookies = await client.login_with_password(usrname, passwd) #get login cookies
-        lttoken = cookies['cookie_token']   #get login lttoken / cookie
-        ltuid = cookies['ltuid']    #get login ltuid
-        account_id = cookies['account_id']  ##get login account_id
+        lttoken = msg_split[0]  #get first element from array
+        ltuid = msg_split[1]   #get second element from array
+        # client.set_browser_cookies()    #set browser cookie
+        # cookies = await client.login_with_password(usrname, passwd) #get login cookies
+        # lttoken = cookies['cookie_token']   #get login lttoken / cookie
+        # ltuid = cookies['ltuid']    #get login ltuid
+        # account_id = cookies['account_id']  #get login account_id
+        # print(f'a user {ltuid} are logged in !')    #Just for debugging
+        print(f'{lttoken}{ltuid}')
+        # client.set_cookies(ltuid=ltuid,ltoken=lttoken)
+        # user = await client.get_full_genshin_user(ltuid)
+        # print(user)
+    embed = discord.Embed(title="Genshin User stats", description="All of your stat on Battle Chronicle", color=0x1abc9c)
     await ctx.send('In progress')
 
 bot.run(TOKEN)  #Run the bot using existing token
