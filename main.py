@@ -118,23 +118,21 @@ async def stat(ctx):
 
     while True: #wait
         msg = await bot.wait_for("message",check=check,timeout=30) #wait for message given, and check if author is the same as requested. Timeout 30s
+        auth = msg.author.id
         await msg.delete()  #Delete message for security
+        prime_acc = True
+        uid = df_chat.query('discord_user_id == @auth and primary_account == @prime_acc')['uid'].to_string(index=False)
         if(str(msg.content).startswith('||')):  #Check if start with || (spoiler tag)
-            msg_split = re.sub(r'\|\|','',str(msg.content)).split() #Remove "||" and convert it into array
+            msg_split = re.sub(r'\|\|',' ',str(msg.content)).split() #Remove "||" and convert it into array
         else:
             msg_split = str(msg.content).split()    #convert it into array
         lttoken = msg_split[0]  #get first element from array
         ltuid = msg_split[1]   #get second element from array
-        # client.set_browser_cookies()    #set browser cookie
-        # cookies = await client.login_with_password(usrname, passwd) #get login cookies
-        # lttoken = cookies['cookie_token']   #get login lttoken / cookie
-        # ltuid = cookies['ltuid']    #get login ltuid
-        # account_id = cookies['account_id']  #get login account_id
-        # print(f'a user {ltuid} are logged in !')    #Just for debugging
-        print(f'{lttoken}{ltuid}')
-        # client.set_cookies(ltuid=ltuid,ltoken=lttoken)
-        # user = await client.get_full_genshin_user(ltuid)
-        # print(user)
+        print(f'{lttoken} {ltuid} {uid}')
+        client.set_cookies(f'ltuid={ltuid}; ltoken={lttoken}')
+        user = await client.get_genshin_user(uid)
+        # print("ok")
+        print(user.stats.characters)
     embed = discord.Embed(title="Genshin User stats", description="All of your stat on Battle Chronicle", color=0x1abc9c)
     await ctx.send('In progress')
 
