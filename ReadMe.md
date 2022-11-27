@@ -35,8 +35,8 @@ After you already create all the necessary account, you need to create bot in di
 
 ## To-Do
 - [x] Generate redeem link.
-- [x] Hosted bot on PaaS (Heroku).
-- [x] Generate redeem link using UID in #UID channel text.
+- [x] ~~Hosted bot on PaaS (Heroku).~~ Heroku doesn't host free tier anymore, it hosted on personal owned raspberry pi 400.
+- [x] ~~Generate redeem link using UID in #UID channel text.~~ It will generate redeem link.
 - [x] List all user UID.
 - [ ] Pull release patch note.
 - [ ] Migrate bot host out from Heroku.

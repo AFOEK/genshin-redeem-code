@@ -12,6 +12,8 @@ import genshin as gi
 import asyncio
 import pandas as pd
 
+#https://genshin.hoyoverse.com/en/gift?code=NS8BD6EPS77Z
+
 #Init
 load_dotenv()   #Load neccessary env
 TOKEN = os.getenv('DISCORD_TOKEN')  #Load token into variable
@@ -80,31 +82,43 @@ async def list_uid(ctx,user:Optional[str]=None):
                 raise discord.ext.commands.errors.BadArgument
     await ctx.send(f'```\n{uid_data}```')
 
-@bot.command(name='redeem', brief="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'second_acc[Optional]' 'server_region[Optional]'", usage="It will make a link for redeeming genshin impact code. If server region is ommited it will assume asia server, and if second_acc is not given it will set to primary")
-async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[bool] = False,srv_reg: Optional[str] = None):
-    print(f'{bot.user.name} getting input from discord client') #Just for debugging
-    redeem_code = redeem_code.upper()   #This will make redeem code become capitalized
-    res_wrn=''
-    if(uid is not None):    #check if "UID" are given
-        if(len(uid) != 9 and (not uid.isnumeric())):
-            raise discord.ext.commands.errors.BadArgument   #raising error if UID is not numeric and less or more than 9 digits
-        else:
-            uid=uid #store UID to UID, this is dumb move but more logical
-    if(uid is None):  #check if "UID" are not given
-        auth = ctx.author.id    #get the message author
-        if(second_acc is False):    #Check if second account flag are False
-            prime_acc=True
-        else:
-            prime_acc=False
-        uid = df_chat.query('discord_user_id == @auth and primary_account == @prime_acc')['uid'].to_string(index=False) #querying UID from dataframe
+# @bot.command(name='redeem', brief="Usage: >>redeem 'redeem_code*' 'uid[Optional]' 'second_acc[Optional]' 'server_region[Optional]'", usage="It will make a link for redeeming genshin impact code. If server region is ommited it will assume asia server, and if second_acc is not given it will set to primary")
+# async def redeem(ctx,redeem_code,uid:Optional[str] = None, second_acc:Optional[bool] = False,srv_reg: Optional[str] = None):
+#     print(f'{bot.user.name} getting input from discord client') #Just for debugging
+#     redeem_code = redeem_code.upper()   #This will make redeem code become capitalized
+#     res_wrn=''
+#     if(uid is not None):    #check if "UID" are given
+#         if(len(uid) != 9 and (not uid.isnumeric())):
+#             raise discord.ext.commands.errors.BadArgument   #raising error if UID is not numeric and less or more than 9 digits
+#         else:
+#             uid=uid #store UID to UID, this is dumb move but more logical
+#     if(uid is None):  #check if "UID" are not given
+#         auth = ctx.author.id    #get the message author
+#         if(second_acc is False):    #Check if second account flag are False
+#             prime_acc=True
+#         else:
+#             prime_acc=False
+#         uid = df_chat.query('discord_user_id == @auth and primary_account == @prime_acc')['uid'].to_string(index=False) #querying UID from dataframe
 
-    if(srv_reg is None):    #Check if server_region are given
-        srv_reg = 'asia'    #Handling if server_region are not given
-        res_wrn = f'Since no server region get specified, it will assume asia region'   #just ordinary warning string
+#     if(srv_reg is None):    #Check if server_region are given
+#         srv_reg = 'asia'    #Handling if server_region are not given
+#         res_wrn = f'Since no server region get specified, it will assume asia region'   #just ordinary warning string
 
-    res = res_wrn+f'\nhttps://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'
-    #print (uid,redeem_code,srv_reg) #Just for debugging
-    await ctx.send(res) #send back response
+#     res = res_wrn+f'\nhttps://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey?uid={uid}&region=os_{srv_reg}&lang=en&cdkey={redeem_code}&game_biz=hk4e_global'
+#     #print (uid,redeem_code,srv_reg) #Just for debugging
+#     await ctx.send(res) #send back response
+
+@bot.command(name='redeem', brief="Usage: >>redeem 'redeem_code*'", usage="It will make a link for redeeming genshin impact gift code.")
+async def redeem(ctx, redeem_code):
+    print(f'{bot.user.name} getting input for redeem links')
+    if(len(redeem_code) != 12):
+        raise discord.ext.commands.errors.BadArgument
+    else:
+        redeem_code = redeem_code.upper()
+        res = "https://genshin.hoyoverse.com/en/gift?code="+redeem_code
+    
+    print(res)
+    await ctx.send(res)
 
 @bot.command(name='stat', brief="Usage: >>stat",usage="It's will display stat of your genshin account")
 async def stat(ctx):
